@@ -1,0 +1,12 @@
+
+======================================================
+              LAPORAN KEUANGAN SLEBEW                 
+======================================================
+ Total pemasukan (Aktif): Rp 70000
+ Total tunggakan	: Rp 50000
+ Jumlah kamar terisi	Rp: 2
+------------------------------------------------------
+ Daftar penghuni menunggak:
+   - Ahmad
+
+
