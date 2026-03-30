@@ -37,6 +37,10 @@ tambah_penghuni() {
     read -p "Masukkan Kamar: " kamar
 
     read -p "Masukkan Harga Sewa: " hargaSewa
+	if [[ $hargaSewa < 0 ]]; then
+	echo "Input harga sewa tidak boleh negatif!"
+	return
+	fi
 
     read -p "Masukkan Tanggal Masuk (YYYY-MM-DD): " tanggalMasuk
     if [[ ! "$tanggalMasuk" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
@@ -218,7 +222,7 @@ kelola_cron() {
 		read -p "Masukkan Jam (0-23): " cronHour
 		read -p "Masukkan Menit (0-59): " cronMinutes
 		crontab -l | grep -v "kost_slebew.sh --check-tagihan" > newCron.tmp
-		echo "$cronMinutes $cronHour * * * $(pwd)/kost_slebew.sh --check-tagihan > $(pwd)/log/tagihan.log" >> newCron.tmp
+		echo "$cronMinutes $cronHour * * * $(pwd)/kost_slebew.sh --check-tagihan" >> newCron.tmp
 		crontab newCron.tmp
 		echo ""
 		echo "Jadwal reminder telah ditambahkan pada setiap hari pukul $cronHour:$cronMinutes"
@@ -252,7 +256,7 @@ if [[ "$1" = "--check-tagihan" ]]; then
 	cmd | getline timestamp
 	close(cmd)
 	printf "%s TAGIHAN: %s (Kamar %s) - Menunggak Rp%s\n", timestamp, $1, $2, $3
-    }' "$DATA_FILE"
+    }' "$DATA_FILE" > log/tagihan.log
     exit 0
 fi
 
