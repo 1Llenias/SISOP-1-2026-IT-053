@@ -519,6 +519,10 @@ tambah_penghuni() {
     read -p "Masukkan Kamar: " kamar
 
     read -p "Masukkan Harga Sewa: " hargaSewa
+	if [[ $hargaSewa < 0 ]]; then
+	echo "Input harga sewa tidak boleh negatif!"
+	return
+	fi
 
     read -p "Masukkan Tanggal Masuk (YYYY-MM-DD): " tanggalMasuk
     if [[ ! "$tanggalMasuk" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
@@ -546,7 +550,9 @@ tambah_penghuni() {
 }
 ```
 
-Pada fungsi tersebut, terdapat beberapa case yang harus dipatuhi, yaitu bahwa `tanggal` yang dimasukkan tidak boleh melebihi tanggal hari ini dan harus berupa format `YYYY-MM-DD`. Untuk mengatasi hal tersebut, digunakan logic `if` untuk memeriksa apakah pola `regex` pada input tanggal sama dengan apa yang diarahkan. Untuk memastikan tanggal tidak dari masa depan, membuat variabel `today` dan mengambil nilai tanggal hari ini dengan menggunakan format `YYYY-MM-DD` dan membandingkan nilainya dengan input. Selain itu diarahkan juga agar kamar yang diisi harus kamar yang masih kosong, dengan menggunakan `awk`, dapat mengecek apakah kamar yang didaftarkan masih kosong atau sudah memiliki penghuni dengan cara mengecek nilai `kamar` pada data penghuni saat ini. Jika semua sudah dirasa aman, akan menulis data penghuni baru pada baris baru dengan format `nama,kamar,harga sewa,tanggal masuk,status awal` ke dalam `data/penghuni.csv`.
+Pada fungsi tersebut, terdapat beberapa case yang harus dipatuhi, yaitu bahwa `tanggal` yang dimasukkan tidak boleh melebihi tanggal hari ini dan harus berupa format `YYYY-MM-DD`. Untuk mengatasi hal tersebut, digunakan logic `if` untuk memeriksa apakah pola `regex` pada input tanggal sama dengan apa yang diarahkan. Untuk memastikan tanggal tidak dari masa depan, membuat variabel `today` dan mengambil nilai tanggal hari ini dengan menggunakan format `YYYY-MM-DD` dan membandingkan nilainya dengan input. Selain itu diarahkan juga agar kamar yang diisi harus kamar yang masih kosong, dengan menggunakan `awk`, dapat mengecek apakah kamar yang didaftarkan masih kosong atau sudah memiliki penghuni dengan cara mengecek nilai `kamar` pada data penghuni saat ini. Jika semua sudah dirasa aman, akan menulis data penghuni baru pada baris baru dengan format `nama,kamar,harga sewa,tanggal masuk,status awal` ke dalam `data/penghuni.csv`. Untuk memastikan Harga Sewa tidak bernilai negatif, membuat pengecekan terhadap nilai `HargaSewa`.
+
+> REVISI: Memperbaiki script pada `HargaSewa` agar nilainya tidak menjadi minus.
 
 Fungsi selanjutnya adalah `hapus_penghuni` berdasarkan nama dan memasukkannya ke `sampah/history_hapus.csv`
 
@@ -730,7 +736,7 @@ kelola_cron() {
 		read -p "Masukkan Jam (0-23): " cronHour
 		read -p "Masukkan Menit (0-59): " cronMinutes
 		crontab -l | grep -v "kost_slebew.sh --check-tagihan" > newCron.tmp
-		echo "$cronMinutes $cronHour * * * $(pwd)/kost_slebew.sh --check-tagihan > $(pwd)/log/tagihan.log" >> newCron.tmp
+		echo "$cronMinutes $cronHour * * * $(pwd)/kost_slebew.sh --check-tagihan" >> newCron.tmp
 		crontab newCron.tmp
 		echo ""
 		echo "Jadwal reminder telah ditambahkan pada setiap hari pukul $cronHour:$cronMinutes"
@@ -772,10 +778,12 @@ if [[ "$1" = "--check-tagihan" ]]; then
 	cmd | getline timestamp
 	close(cmd)
 	printf "%s TAGIHAN: %s (Kamar %s) - Menunggak Rp%s\n", timestamp, $1, $2, $3
-    }' "$DATA_FILE"
+    }' "$DATA_FILE" > log/tagihan.log
     exit 0
 fi
 ```
+
+> REVISI: Mengubah timpa file yang awalnya memasukkan hasil output `--check-tagihan` ke `log/tagihan.log` menjadi mengeluarkan hasil output `awk` pada `--check-tagihan` ke `log/tagihan.log`.
 
 Fungsi tersebut digunakan untuk mencetak nama-nama penunggak beserta kamar dan tagihannya ke dalam file `log/tagihan.log`.
 
