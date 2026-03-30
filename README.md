@@ -33,7 +33,7 @@ soal == "b" && NR>1{
 }
 ```
 
-	REVISI: Memperbaiki script yang sebelumnya hanya mencari nama unik gerbong menjadi mengubah semua nama unik gerbong menjadi format yang sama (tanpa /r [return]), lalu memasukkannya ke dalam Array. Hal ini sebagai pencegahan apabila gerbong unik di baris terakhir yang tidak mengandung '/r' bisa tetap terhitung.
+> REVISI: Memperbaiki script yang sebelumnya hanya mencari nama unik gerbong menjadi mengubah semua nama unik gerbong menjadi format yang sama (tanpa /r [return]), lalu memasukkannya ke dalam Array. Hal ini sebagai pencegahan apabila gerbong unik di baris terakhir yang tidak mengandung '/r' bisa tetap terhitung.
 
 Untuk subsoal c, mencari penumpang tertua dengan cara membuat variabel `max` dan membandingkannya dengan setiap umur yang ada di kolom umur (kolom `$2`) dan menggantinya setiap terdapat umur yang lebih besar serta menset namanya ke variabel `oldest`
 
@@ -56,7 +56,7 @@ soal == "d" && NR>1 {
 }
 ```
 
-	REVISI: Menghilangkan +0.5 di perhitungan average karena soal tidak meminta untuk dibulatkan ke bilangan bulat terdekat, jadi cukup dibulatkan ke bawah saja
+> REVISI: Menghilangkan +0.5 di perhitungan average karena soal tidak meminta untuk dibulatkan ke bilangan bulat terdekat, jadi cukup dibulatkan ke bawah saja
 
 Untuk subsoal e, menghitung jumlah penumpang business dengan membuat variabel `business` dan menambahkan nilainya jika kolom jenis gerbong pada data adalah "Business" (kolom `$3`)
 
@@ -81,8 +81,11 @@ soal == "a" && NR>1 {
 	penumpang++
 }
 
-soal == "b" && NR>1 {
-	gerbong[$4]
+soal == "b" && NR>1{
+    g=$4
+    sub(/\r$/,"",g)
+    g=gensub(/^ +| +$/,"","g",g)
+    gerbong[g]
 }
 
 soal == "c" && NR>1 {
@@ -95,7 +98,7 @@ soal == "c" && NR>1 {
 soal == "d" && NR>1 {
 	total_umur+=$2
 	penumpang++
-	average=int((total_umur/penumpang)+0.5)
+	average=int((total_umur/penumpang))
 }
 
 soal == "e" && NR>1 {
