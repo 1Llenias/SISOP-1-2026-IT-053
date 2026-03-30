@@ -22,13 +22,18 @@ soal == "a" && NR>1 {
 }
 ```
 
-Untuk subsoal b, menghitung berapa banyak gerbong unik yang ada di `passenger.csv`. Untuk menghitungnya, membuat sebuah array `gerbong` dengan anggotanya kolom gerbong, yaitu kolom `$4`
+Untuk subsoal b, menghitung berapa banyak gerbong unik yang ada di `passenger.csv`. Untuk menghitungnya, membuat sebuah array `gerbong` dengan anggotanya kolom gerbong, yaitu kolom `$4`. Sebelum dimasukkan ke dalam array, membersihkan `/r` agar Gerbong di baris terakhir tidak terhitung berbeda dengan Gerbong dengan nama unik yang sama di baris lainnya.
 
 ```bash
-soal == "b" && NR>1 {
-	gerbong[$4]
+soal == "b" && NR>1{
+    g=$4
+    sub(/\r$/,"",g)
+    g=gensub(/^ +| +$/,"","g",g)
+    gerbong[g]
 }
 ```
+
+	REVISI: Memperbaiki script yang sebelumnya hanya mencari nama unik gerbong menjadi mengubah semua nama unik gerbong menjadi format yang sama (tanpa /r [return]), lalu memasukkannya ke dalam Array. Hal ini sebagai pencegahan apabila gerbong unik di baris terakhir yang tidak mengandung '/r' bisa tetap terhitung.
 
 Untuk subsoal c, mencari penumpang tertua dengan cara membuat variabel `max` dan membandingkannya dengan setiap umur yang ada di kolom umur (kolom `$2`) dan menggantinya setiap terdapat umur yang lebih besar serta menset namanya ke variabel `oldest`
 
@@ -47,9 +52,11 @@ Untuk subsoal d, membuat variabel `total_umur` yang menghitung jumlah semua umur
 soal == "d" && NR>1 {
 	total_umur+=$2
 	penumpang++
-	average=int((total_umur/penumpang)+0.5)
+	average=int((total_umur/penumpang))
 }
 ```
+
+	REVISI: Menghilangkan +0.5 di perhitungan average karena soal tidak meminta untuk dibulatkan ke bilangan bulat terdekat, jadi cukup dibulatkan ke bawah saja
 
 Untuk subsoal e, menghitung jumlah penumpang business dengan membuat variabel `business` dan menambahkan nilainya jika kolom jenis gerbong pada data adalah "Business" (kolom `$3`)
 
