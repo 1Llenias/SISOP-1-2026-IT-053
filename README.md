@@ -142,7 +142,7 @@ dimana `KANJ.sh` merupakan argumen 1, dan `[subsoal]` merupakan argumen 2. Oleh 
 
 1.1 Hasil command `awk -f KANJ.sh passenger.csv [subsoal]` yang dijalankan pada setiap subsoal:
 
-![](assets/soal_1/a1.png)
+![](assets/soal_1/a1_revisi.png)
 
 1.2 Output apabila user menginput dengan argumen subsoal yang tidak sesuai:
 
