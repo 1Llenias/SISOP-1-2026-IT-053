@@ -1,15 +1,18 @@
 BEGIN {
 	soal = ARGV[2]
-	delete ARGV[2]
-	FS=","
+    delete ARGV[2]
+    FS=","
 }
 
 soal == "a" && NR>1 {
-	penumpang++
+    penumpang++
 }
 
-soal == "b" && NR>1 {
-	gerbong[$4]
+soal == "b" && NR>1{
+    g=$4
+    sub(/\r$/,"",g)
+    g=gensub(/^ +| +$/,"","g",g)
+    gerbong[g]
 }
 
 soal == "c" && NR>1 {
@@ -22,7 +25,7 @@ soal == "c" && NR>1 {
 soal == "d" && NR>1 {
 	total_umur+=$2
 	penumpang++
-	average=int((total_umur/penumpang)+0.5)
+	average=int((total_umur/penumpang))
 }
 
 soal == "e" && NR>1 {
